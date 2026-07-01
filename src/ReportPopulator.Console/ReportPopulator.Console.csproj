@@ -9,4 +9,12 @@
     <Version>0.1.0</Version>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ReportPopulator.Library\ReportPopulator.Library.csproj" />
+  </ItemGroup>
+
 </Project>
