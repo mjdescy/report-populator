@@ -5,10 +5,16 @@ namespace ReportPopulator.Library;
 
 public sealed class PopulatorService
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        WriteIndented = true
+    };
+
     public PopulatorConfig LoadConfig(string configFilePath)
     {
         var json = File.ReadAllText(configFilePath);
-        var config = JsonSerializer.Deserialize<PopulatorConfig>(json);
+        var config = JsonSerializer.Deserialize<PopulatorConfig>(json, JsonOptions);
         return config ?? new PopulatorConfig();
     }
 
@@ -39,7 +45,7 @@ public sealed class PopulatorService
             Directory.CreateDirectory(directory);
         }
 
-        var json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+        var json = JsonSerializer.Serialize(config, JsonOptions);
         File.WriteAllText(outputFilePath, json);
     }
 
