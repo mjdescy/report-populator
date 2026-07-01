@@ -1,2 +1,10 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ReportPopulator.Console/ReportPopulator.Console.csproj" />
+    <Project Path="src/ReportPopulator.Library/ReportPopulator.Library.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ReportPopulator.Console.Tests/ReportPopulator.Console.Tests.csproj" />
+    <Project Path="tests/ReportPopulator.Library.Tests/ReportPopulator.Library.Tests.csproj" />
+  </Folder>
 </Solution>
