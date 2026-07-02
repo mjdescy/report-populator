@@ -1,5 +1,6 @@
 ﻿using CommandLine;
 using ReportPopulator.Library;
+using SysConsole = System.Console;
 
 namespace ReportPopulator.Console;
 
@@ -21,12 +22,12 @@ public static class Program
         try
         {
             service.RunFromConfigFile(options.ConfigFilePath);
-            System.Console.WriteLine("Report population completed successfully.");
+            SysConsole.WriteLine("Report population completed successfully.");
             return 0;
         }
         catch (Exception ex)
         {
-            System.Console.Error.WriteLine($"Error: {ex.Message}");
+            SysConsole.Error.WriteLine($"Error: {ex.Message}");
             return 1;
         }
     }
@@ -39,21 +40,33 @@ public static class Program
             : options.OutputPath;
 
         service.GenerateSampleConfig(outputPath);
-        System.Console.WriteLine($"Sample configuration file written to: {outputPath}");
+        SysConsole.WriteLine($"Sample configuration file written to: {outputPath}");
         return 0;
     }
 }
 
+/// <summary>
+/// CLI options for the <c>run</c> verb.
+/// </summary>
 [Verb("run", HelpText = "Run the report population using the specified configuration file.")]
 public sealed class RunOptions
 {
+    /// <summary>
+    /// Path to the configuration JSON file.
+    /// </summary>
     [Value(0, Required = true, MetaName = "config.json", HelpText = "Path to the configuration file.")]
     public string ConfigFilePath { get; set; } = string.Empty;
 }
 
+/// <summary>
+/// CLI options for the <c>init</c> verb.
+/// </summary>
 [Verb("init", HelpText = "Generate a sample configuration file.")]
 public sealed class InitOptions
 {
+    /// <summary>
+    /// Optional output file path. Defaults to <c>./sample-config.json</c>.
+    /// </summary>
     [Value(0, Required = false, MetaName = "output-path", HelpText = "Optional output file path. Defaults to ./sample-config.json.")]
     public string? OutputPath { get; set; }
 }

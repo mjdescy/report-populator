@@ -3,6 +3,9 @@ using ClosedXML.Excel;
 
 namespace ReportPopulator.Library;
 
+/// <summary>
+/// Reads configuration, processes report population mappings, and generates sample config files.
+/// </summary>
 public sealed class PopulatorService
 {
     private static readonly JsonSerializerOptions _jsonOptions = new()
@@ -11,6 +14,11 @@ public sealed class PopulatorService
         WriteIndented = true
     };
 
+    /// <summary>
+    /// Loads a population configuration from a JSON file.
+    /// </summary>
+    /// <param name="configFilePath">Path to the configuration JSON file.</param>
+    /// <returns>A <see cref="PopulatorConfig"/> containing the parsed mappings.</returns>
     public PopulatorConfig LoadConfig(string configFilePath)
     {
         var json = File.ReadAllText(configFilePath);
@@ -18,6 +26,10 @@ public sealed class PopulatorService
         return new PopulatorConfig { Mappings = mappings ?? [] };
     }
 
+    /// <summary>
+    /// Writes a sample configuration file with example mappings.
+    /// </summary>
+    /// <param name="outputFilePath">Path where the sample config file will be written. Intermediate directories are created if needed.</param>
     public void GenerateSampleConfig(string outputFilePath)
     {
         var config = new PopulatorConfig
@@ -49,6 +61,13 @@ public sealed class PopulatorService
         File.WriteAllText(outputFilePath, json);
     }
 
+    /// <summary>
+    /// Executes all mappings in the configuration, copying source ranges to destination workbooks.
+    /// </summary>
+    /// <param name="config">The population configuration to execute.</param>
+    /// <param name="baseDirectory">
+    /// Optional base directory for resolving relative paths. When <c>null</c>, paths are used as-is.
+    /// </param>
     public void Run(PopulatorConfig config, string? baseDirectory = null)
     {
         foreach (var mapping in config.Mappings)
@@ -57,6 +76,11 @@ public sealed class PopulatorService
         }
     }
 
+    /// <summary>
+    /// Loads a configuration file and runs the population, resolving relative source and destination
+    /// paths against the config file's directory.
+    /// </summary>
+    /// <param name="configFilePath">Path to the configuration JSON file.</param>
     public void RunFromConfigFile(string configFilePath)
     {
         var config = LoadConfig(configFilePath);
