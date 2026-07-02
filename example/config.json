@@ -1,0 +1,20 @@
+[
+  {
+    "sourceFilePath": "source-a.xlsx",
+    "destinationFilePath": "report.xlsx",
+    "destinationWorksheet": "Report",
+    "destinationCellAddress": "B3"
+  },
+  {
+    "sourceFilePath": "source-b.xlsx",
+    "destinationFilePath": "report.xlsx",
+    "destinationWorksheet": "Report",
+    "destinationCellAddress": "B8"
+  },
+  {
+    "sourceFilePath": "source-c.xlsx",
+    "destinationFilePath": "report.xlsx",
+    "destinationWorksheet": "Report",
+    "destinationCellAddress": "B13"
+  }
+]

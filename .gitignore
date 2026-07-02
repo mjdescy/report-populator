@@ -483,3 +483,6 @@ $RECYCLE.BIN/
 
 # Generated sample config
 sample-config.json
+
+# Generated example output
+example/report.xlsx
