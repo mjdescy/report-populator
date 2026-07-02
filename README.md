@@ -4,6 +4,8 @@ Copies cell ranges from source Excel workbooks into destination workbooks at spe
 
 Reads a JSON configuration file containing source/destination mappings and, for each mapping, copies the used range (starting at A1) from the first worksheet of the source `.xlsx` file to a target worksheet and cell in the destination `.xlsx` file.
 
+Note: This is a vibe-coded app.
+
 ## Usage
 
 ```
@@ -27,16 +29,14 @@ reportpopulator run config.json
 ## Configuration
 
 ```json
-{
-  "mappings": [
-    {
-      "sourceFilePath": "data/source.xlsx",
-      "destinationFilePath": "output/report.xlsx",
-      "destinationWorksheet": "Summary",
-      "destinationCellAddress": "A4"
-    }
-  ]
-}
+[
+  {
+    "sourceFilePath": "data/source.xlsx",
+    "destinationFilePath": "output/report.xlsx",
+    "destinationWorksheet": "Summary",
+    "destinationCellAddress": "A4"
+  }
+]
 ```
 
 | Field | Description |
@@ -46,7 +46,7 @@ reportpopulator run config.json
 | `destinationWorksheet` | Target worksheet name (created if missing) |
 | `destinationCellAddress` | Top-left cell where source data is pasted (e.g. `A4`) |
 
-Multiple mappings to the same destination file and worksheet are supported.
+Relative paths are resolved against the config file's directory. Multiple mappings to the same destination file and worksheet are supported.
 
 ## License
 
