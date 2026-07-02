@@ -261,7 +261,7 @@ public sealed class PopulatorServiceTests
                 ]
             };
 
-            var json = JsonSerializer.Serialize(config,
+            var json = JsonSerializer.Serialize(config.Mappings,
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, WriteIndented = true });
             File.WriteAllText(configPath, json);
 

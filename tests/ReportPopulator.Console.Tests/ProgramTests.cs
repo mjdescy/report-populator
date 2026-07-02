@@ -43,10 +43,10 @@ public sealed class ProgramTests
 
             var json = File.ReadAllText(outputPath);
             var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-            var config = JsonSerializer.Deserialize<PopulatorConfig>(json, options);
+            var mappings = JsonSerializer.Deserialize<List<PopulatorRecord>>(json, options);
 
-            Assert.NotNull(config);
-            Assert.NotEmpty(config.Mappings);
+            Assert.NotNull(mappings);
+            Assert.NotEmpty(mappings);
         }
         finally
         {
@@ -69,7 +69,6 @@ public sealed class ProgramTests
             Assert.Equal(0, exitCode);
 
             var json = File.ReadAllText(outputPath);
-            Assert.Contains("\"mappings\"", json);
             Assert.Contains("\"sourceFilePath\"", json);
             Assert.Contains("\"destinationFilePath\"", json);
             Assert.Contains("\"destinationWorksheet\"", json);
@@ -130,7 +129,7 @@ public sealed class ProgramTests
                     )
                 ]
             };
-            var json = JsonSerializer.Serialize(config,
+            var json = JsonSerializer.Serialize(config.Mappings,
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, WriteIndented = true });
             File.WriteAllText(configPath, json);
 

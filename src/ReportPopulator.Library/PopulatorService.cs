@@ -14,8 +14,8 @@ public sealed class PopulatorService
     public PopulatorConfig LoadConfig(string configFilePath)
     {
         var json = File.ReadAllText(configFilePath);
-        var config = JsonSerializer.Deserialize<PopulatorConfig>(json, JsonOptions);
-        return config ?? new PopulatorConfig();
+        var mappings = JsonSerializer.Deserialize<List<PopulatorRecord>>(json, JsonOptions);
+        return new PopulatorConfig { Mappings = mappings ?? [] };
     }
 
     public void GenerateSampleConfig(string outputFilePath)
@@ -45,7 +45,7 @@ public sealed class PopulatorService
             Directory.CreateDirectory(directory);
         }
 
-        var json = JsonSerializer.Serialize(config, JsonOptions);
+        var json = JsonSerializer.Serialize(config.Mappings, JsonOptions);
         File.WriteAllText(outputFilePath, json);
     }
 

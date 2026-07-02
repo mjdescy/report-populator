@@ -20,22 +20,20 @@ public sealed class ConfigTests
         {
             var configPath = Path.Combine(tempDir, "config.json");
             var json = """
-            {
-              "mappings": [
-                {
-                  "sourceFilePath": "source.xlsx",
-                  "destinationFilePath": "dest.xlsx",
-                  "destinationWorksheet": "Sheet1",
-                  "destinationCellAddress": "A4"
-                },
-                {
-                  "sourceFilePath": "source2.xlsx",
-                  "destinationFilePath": "dest2.xlsx",
-                  "destinationWorksheet": "Data",
-                  "destinationCellAddress": "B2"
-                }
-              ]
-            }
+            [
+              {
+                "sourceFilePath": "source.xlsx",
+                "destinationFilePath": "dest.xlsx",
+                "destinationWorksheet": "Sheet1",
+                "destinationCellAddress": "A4"
+              },
+              {
+                "sourceFilePath": "source2.xlsx",
+                "destinationFilePath": "dest2.xlsx",
+                "destinationWorksheet": "Data",
+                "destinationCellAddress": "B2"
+              }
+            ]
             """;
             File.WriteAllText(configPath, json);
 
@@ -70,7 +68,7 @@ public sealed class ConfigTests
         try
         {
             var configPath = Path.Combine(tempDir, "config.json");
-            var json = """{ "mappings": [] }""";
+            var json = """[]""";
             File.WriteAllText(configPath, json);
 
             var service = new PopulatorService();
@@ -100,11 +98,11 @@ public sealed class ConfigTests
             Assert.True(File.Exists(outputPath));
 
             var json = File.ReadAllText(outputPath);
-            var config = JsonSerializer.Deserialize<PopulatorConfig>(json, JsonOptions);
+            var mappings = JsonSerializer.Deserialize<List<PopulatorRecord>>(json, JsonOptions);
 
-            Assert.NotNull(config);
-            Assert.NotEmpty(config.Mappings);
-            Assert.Equal("path/to/source.xlsx", config.Mappings[0].SourceFilePath);
+            Assert.NotNull(mappings);
+            Assert.NotEmpty(mappings);
+            Assert.Equal("path/to/source.xlsx", mappings[0].SourceFilePath);
         }
         finally
         {
