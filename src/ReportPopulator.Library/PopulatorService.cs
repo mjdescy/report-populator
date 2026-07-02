@@ -49,22 +49,32 @@ public sealed class PopulatorService
         File.WriteAllText(outputFilePath, json);
     }
 
-    public void Run(PopulatorConfig config)
+    public void Run(PopulatorConfig config, string? baseDirectory = null)
     {
         foreach (var mapping in config.Mappings)
         {
-            ProcessMapping(mapping);
+            ProcessMapping(mapping, baseDirectory);
         }
     }
 
-    private static void ProcessMapping(PopulatorRecord mapping)
+    public void RunFromConfigFile(string configFilePath)
     {
-        using var sourceWorkbook = new XLWorkbook(mapping.SourceFilePath);
+        var config = LoadConfig(configFilePath);
+        var baseDirectory = Path.GetDirectoryName(Path.GetFullPath(configFilePath));
+        Run(config, baseDirectory);
+    }
+
+    private static void ProcessMapping(PopulatorRecord mapping, string? baseDirectory)
+    {
+        var sourcePath = ResolvePath(mapping.SourceFilePath, baseDirectory);
+        var destinationPath = ResolvePath(mapping.DestinationFilePath, baseDirectory);
+
+        using var sourceWorkbook = new XLWorkbook(sourcePath);
         var sourceWorksheet = sourceWorkbook.Worksheet(1);
         var sourceRange = sourceWorksheet.RangeUsed();
 
-        using var destinationWorkbook = File.Exists(mapping.DestinationFilePath)
-            ? new XLWorkbook(mapping.DestinationFilePath)
+        using var destinationWorkbook = File.Exists(destinationPath)
+            ? new XLWorkbook(destinationPath)
             : new XLWorkbook();
 
         IXLWorksheet destinationWorksheet;
@@ -83,7 +93,15 @@ public sealed class PopulatorService
             CopyRange(sourceRange, destinationCell);
         }
 
-        destinationWorkbook.SaveAs(mapping.DestinationFilePath);
+        destinationWorkbook.SaveAs(destinationPath);
+    }
+
+    private static string ResolvePath(string path, string? baseDirectory)
+    {
+        if (baseDirectory is null || Path.IsPathRooted(path))
+            return path;
+
+        return Path.GetFullPath(Path.Combine(baseDirectory, path));
     }
 
     private static void CopyRange(IXLRange sourceRange, IXLCell destinationCell)

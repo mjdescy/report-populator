@@ -20,8 +20,7 @@ public static class Program
 
         try
         {
-            var config = service.LoadConfig(options.ConfigFilePath);
-            service.Run(config);
+            service.RunFromConfigFile(options.ConfigFilePath);
             System.Console.WriteLine("Report population completed successfully.");
             return 0;
         }

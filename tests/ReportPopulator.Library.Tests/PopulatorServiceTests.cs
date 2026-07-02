@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ClosedXML.Excel;
 using ReportPopulator.Library;
 
@@ -226,6 +227,54 @@ public sealed class PopulatorServiceTests
             Assert.Equal("Y1", ws.Cell("C6").GetString());
             Assert.Equal("Y2", ws.Cell("D6").GetString());
             Assert.Equal("Y3", ws.Cell("E6").GetString());
+        }
+        finally
+        {
+            Directory.Delete(tempDir, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void RunFromConfigFile_ResolvesRelativePaths()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            var sourcePath = Path.Combine(tempDir, "source.xlsx");
+            var destPath = Path.Combine(tempDir, "dest.xlsx");
+            var configPath = Path.Combine(tempDir, "config.json");
+
+            CreateSourceWorkbook(sourcePath, new[] { "RelA", "RelB" }, new[] { "RelC", "RelD" });
+
+            var config = new PopulatorConfig
+            {
+                Mappings =
+                [
+                    new PopulatorRecord(
+                        SourceFilePath: "source.xlsx",
+                        DestinationFilePath: "./dest.xlsx",
+                        DestinationWorksheet: "Sheet1",
+                        DestinationCellAddress: "A1"
+                    )
+                ]
+            };
+
+            var json = JsonSerializer.Serialize(config,
+                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, WriteIndented = true });
+            File.WriteAllText(configPath, json);
+
+            var service = new PopulatorService();
+            service.RunFromConfigFile(configPath);
+
+            using var destWorkbook = new XLWorkbook(destPath);
+            var ws = destWorkbook.Worksheet("Sheet1");
+
+            Assert.Equal("RelA", ws.Cell("A1").GetString());
+            Assert.Equal("RelB", ws.Cell("B1").GetString());
+            Assert.Equal("RelC", ws.Cell("A2").GetString());
+            Assert.Equal("RelD", ws.Cell("B2").GetString());
         }
         finally
         {
