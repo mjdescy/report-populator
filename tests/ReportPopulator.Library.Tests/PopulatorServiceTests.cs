@@ -105,8 +105,8 @@ public sealed class PopulatorServiceTests
             var source2Path = Path.Combine(tempDir, "source2.xlsx");
             var destPath = Path.Combine(tempDir, "dest.xlsx");
 
-            CreateSourceWorkbook(source1Path, new[] { "DataA1", "DataB1" }, new[] { "DataA2", "DataB2" });
-            CreateSourceWorkbook(source2Path, new[] { "Foo", "Bar" });
+            CreateSourceWorkbook(source1Path, ["DataA1", "DataB1"], ["DataA2", "DataB2"]);
+            CreateSourceWorkbook(source2Path, ["Foo", "Bar"]);
 
             var config = new PopulatorConfig
             {
@@ -182,6 +182,11 @@ public sealed class PopulatorServiceTests
 
             var exception = Record.Exception(() => service.Run(config));
             Assert.Null(exception);
+            Assert.True(File.Exists(destPath));
+
+            using var destWorkbook = new XLWorkbook(destPath);
+            var destWorksheet = destWorkbook.Worksheet("Sheet1");
+            Assert.NotNull(destWorksheet);
         }
         finally
         {
@@ -200,7 +205,7 @@ public sealed class PopulatorServiceTests
             var sourcePath = Path.Combine(tempDir, "source.xlsx");
             var destPath = Path.Combine(tempDir, "dest.xlsx");
 
-            CreateSourceWorkbook(sourcePath, new[] { "X1", "X2", "X3" }, new[] { "Y1", "Y2", "Y3" });
+            CreateSourceWorkbook(sourcePath, ["X1", "X2", "X3"], ["Y1", "Y2", "Y3"]);
 
             var config = new PopulatorConfig
             {
@@ -246,7 +251,7 @@ public sealed class PopulatorServiceTests
             var destPath = Path.Combine(tempDir, "dest.xlsx");
             var configPath = Path.Combine(tempDir, "config.json");
 
-            CreateSourceWorkbook(sourcePath, new[] { "RelA", "RelB" }, new[] { "RelC", "RelD" });
+            CreateSourceWorkbook(sourcePath, ["RelA", "RelB"], ["RelC", "RelD"]);
 
             var config = new PopulatorConfig
             {
@@ -287,13 +292,13 @@ public sealed class PopulatorServiceTests
         using var wb = new XLWorkbook();
         var ws = wb.AddWorksheet("Sheet1");
 
-        var headers = row1 ?? new[] { "Header1", "Header2", "Header3" };
+        var headers = row1 ?? ["Header1", "Header2", "Header3"];
         for (var i = 0; i < headers.Length; i++)
         {
             ws.Cell(1, i + 1).Value = headers[i];
         }
 
-        var values = row2 ?? new[] { "Value1", "Value2", "Value3" };
+        var values = row2 ?? ["Value1", "Value2", "Value3"];
         for (var i = 0; i < values.Length; i++)
         {
             ws.Cell(2, i + 1).Value = values[i];
