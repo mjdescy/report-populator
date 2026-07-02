@@ -5,7 +5,7 @@ namespace ReportPopulator.Library;
 
 public sealed class PopulatorService
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
+    private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         WriteIndented = true
@@ -14,7 +14,7 @@ public sealed class PopulatorService
     public PopulatorConfig LoadConfig(string configFilePath)
     {
         var json = File.ReadAllText(configFilePath);
-        var mappings = JsonSerializer.Deserialize<List<PopulatorRecord>>(json, JsonOptions);
+        var mappings = JsonSerializer.Deserialize<List<PopulatorRecord>>(json, _jsonOptions);
         return new PopulatorConfig { Mappings = mappings ?? [] };
     }
 
@@ -45,7 +45,7 @@ public sealed class PopulatorService
             Directory.CreateDirectory(directory);
         }
 
-        var json = JsonSerializer.Serialize(config.Mappings, JsonOptions);
+        var json = JsonSerializer.Serialize(config.Mappings, _jsonOptions);
         File.WriteAllText(outputFilePath, json);
     }
 

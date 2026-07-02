@@ -11,18 +11,21 @@ public sealed class ProgramTests
         var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(tempDir);
 
+        var originalCwd = Environment.CurrentDirectory;
+
         try
         {
+            Environment.CurrentDirectory = tempDir;
+
             var exitCode = Program.Main(["init"]);
             Assert.Equal(0, exitCode);
 
-            var expectedPath = Path.Combine(Directory.GetCurrentDirectory(), "sample-config.json");
-            // The output is written to the current directory (tempDir is not current dir)
-            // We can only verify the file at the default path; clean up if it exists
+            var expectedPath = Path.Combine(tempDir, "sample-config.json");
+            Assert.True(File.Exists(expectedPath));
         }
         finally
         {
-            CleanupDefaultSampleConfig();
+            Environment.CurrentDirectory = originalCwd;
             Directory.Delete(tempDir, recursive: true);
         }
     }
